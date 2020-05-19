@@ -1,4 +1,6 @@
 import numpy as np
+from sklearn.model_selection import train_test_split
+import statistics
 
 
 def main():
@@ -6,13 +8,80 @@ def main():
     print("By Marina Neumann ")
     print("Spring 2020")
     dataLoad()
+    spamOrNot = spamClassifer(Xtrain,Xtest)
+
+    spamOrNot.model()
+    #spamOrNot.naiveBayesAlg()
 
 def dataLoad():
-    data = np.genfromtxt('spambase/spambase.data')
-    #Xtrain, Xtest, Ytrain, Ytest = train_test_split(data)
-    print(data)
+    global Xtrain, Xtest
+    data = np.genfromtxt('spambase/spambase.data', delimiter=',', dtype=float)
+    Xtrain, Xtest =train_test_split(data, shuffle = True, test_size = 0.5)
+
+    #print(Xtrain.shape)
+    #print(Xtest.shape)
+
+class spamClassifer():
+    def __init__(self,train,test):
+        self.train = train
+        self.test = test
+        self.size = 58
+        self.numTrain = len(train)
+        self.numTest = len(test)
 
 
-def model():
-    print("blehhhh")
+    def model(self):
+        m = 0
+        m = mean(self.train)
+
+        # arrays0 =[]
+        # arrays1 =[]
+        # stDevs0 = []
+        # stDevs1 = []
+        # countSpam = 0
+        # countNot = 0
+        # for i in self.train:
+        #     if i[57] ==1:
+        #         arrays1.append(i)
+        #         countSpam += 1
+        #     else:
+        #         arrays0.append(i)
+        #         countNot += 1
+        # z =0
+        # x = 0
+        # #for i in arrays0:
+        # for z in range(self.size -1):
+        #     sD0 = np.std(arrays0, axis = 0)
+        #     stDevs0.append(sD0)
+        # for x in range(self.size -1):
+        #     sD1 = np.std(arrays1, axis = 0)
+        #     stDevs1.append(sD1)
+        #
+        # probSpam = countSpam/ self.numTrain
+        # probNotSpam = countNot/self.numTrain
+        # print("Prior probability that it is spam:", probSpam)
+        # print("Prior probability that it is NOT spam:", probNotSpam)
+        # print("Standard deviation for class 0:", stDevs0)
+        # print("Standard deviation for class 0 length:", len(stDevs0))
+
+        # for i in range(self.size -1):
+        #     sD = np.std(Xtrain, axis = 0)
+        #     # if sD == 0:
+        #     #     sD = 0.0001
+        #     #     stDevs0.append(sD)
+        #     # else:
+        #     #     stDevs0.append(sD)
+        #     stDevs.append(sD)
+        # print("Standard deviations for each?:", stDevs)
+        # print("Number of standard devs:", len(stDevs))
+
+
+    def naiveBayesAlg(self):
+        print("SUP?")
+
+def mean(data):
+    return sum(data)/float(len(data))
+
+def stdev(data):
+
 main()
