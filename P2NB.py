@@ -1,6 +1,8 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
 import statistics
+#import math
+from math import sqrt, pi, exp
 
 
 def main():
@@ -31,15 +33,33 @@ class spamClassifer():
 
 
     def model(self):
-        m = 0
-        m = mean(self.train)
+        means0 = []
+        stDevs0 = []
+        means1 = []
+        stDevs1 = []
 
-        # arrays0 =[]
-        # arrays1 =[]
-        # stDevs0 = []
-        # stDevs1 = []
-        # countSpam = 0
-        # countNot = 0
+        arrays0 =[]
+        arrays1 =[]
+        countSpam = 0
+        countNot = 0
+        for i in self.train:
+            if i[57] == 1:
+                arrays1.append(i)
+                countSpam +=1
+            else:
+                arrays0.append(i)
+                countNot +=1
+        for column in zip(*arrays0):
+            means0.append(mean(column))
+            stDevs0.append(stdev(column))
+        del(means0[-1])
+        del(stDevs0[-1])
+        for column in zip(*arrays1):
+            means1.append(mean(column))
+            stDevs1.append(stdev(column))
+        del (means1[-1])
+        del (stDevs1[-1])
+
         # for i in self.train:
         #     if i[57] ==1:
         #         arrays1.append(i)
@@ -57,10 +77,10 @@ class spamClassifer():
         #     sD1 = np.std(arrays1, axis = 0)
         #     stDevs1.append(sD1)
         #
-        # probSpam = countSpam/ self.numTrain
-        # probNotSpam = countNot/self.numTrain
-        # print("Prior probability that it is spam:", probSpam)
-        # print("Prior probability that it is NOT spam:", probNotSpam)
+        probSpam = countSpam/ self.numTrain
+        probNotSpam = countNot/self.numTrain
+        print("Prior probability that it is spam:", probSpam)
+        print("Prior probability that it is NOT spam:", probNotSpam)
         # print("Standard deviation for class 0:", stDevs0)
         # print("Standard deviation for class 0 length:", len(stDevs0))
 
@@ -78,10 +98,21 @@ class spamClassifer():
 
     def naiveBayesAlg(self):
         print("SUP?")
+        #me =mean(self.test)
+        #sD =stdev(self.test)
+        #calculateProb(self, me, sD)
+
+    def calculateProb(data, me, sD):
+        pi = math.pi
+        ex = exp(-((data- me)**2/(2*sD**2)))
+        return (1/ (sqrt(2* pi)* sD))* ex
 
 def mean(data):
     return sum(data)/float(len(data))
 
 def stdev(data):
+    avg = mean(data)
+    variance = sum([(x-avg)**2 for x in data])/ float(len(data)-1)
+    return sqrt(variance)
 
 main()
