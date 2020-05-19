@@ -78,26 +78,34 @@ class spamClassifer():
 
     def naiveBayesAlg(self):
         print("SUP?")
-        #means = []
-        #stDevs = []
+        means0 = []
+        stDevs0 = []
+        probabilities = []
         probabilities0 = []
         probabiltiies1 = []
         finalprob0 =0
         finalprob1 = 0
+        for column in zip(*self.test0):
+            means0.append(mean(column))
+            stDevs0.append(stdev(column))
+        del (means0[-1])
+        del (stDevs0[-1])
+        n = 0
         for i in self.test0:
-            me =mean(i)
-            sD =stdev(i)
-            probs = calculateProb(i, me, sD)
-            probabilities0.append(probs)
+            for z in i:
+                probs = calculateProb(z, means0[n], stDevs0[n])
+                n +=1
+                probabilities.append(probs)
+            probabilities0.append(np.log(probabilities))
         cNum =1
         probNum1 = testClassProb(self.test0, cNum)
-        finalprob0 =  np.argmax(sum(probabilities0, probNum1))
+        finalprob0 = np.argmax(sum(probabilities0, np.log(probNum1)))
         print("Final probability of class 0:", finalprob0)
         for m in self.test1:
-            me = mean(i)
-            sD = stdev(i)
-            probs = calculateProb(i, me, sD)
-            probabiltiies1.append(probs)
+            me = mean(m)
+            sD = stdev(m)
+            i#probs = calculateProb(m, me, sD)
+            #probabiltiies1.append(probs)
         cNum = 0
         probNum1 = testClassProb(self.test1, cNum)
         finalprob1 = np.argmax(sum(probabiltiies1, probNum1))
