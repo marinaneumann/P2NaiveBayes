@@ -13,7 +13,7 @@ def main():
     spamOrNot = spamClassifer(Xtrain,Xtest)
 
     spamOrNot.model()
-    #spamOrNot.naiveBayesAlg()
+    spamOrNot.naiveBayesAlg()
 
 def dataLoad():
     global Xtrain, Xtest
@@ -87,35 +87,39 @@ class spamClassifer():
         for i in self.test0:
             me =mean(i)
             sD =stdev(i)
-            probs = self.calculateProb(self.test0, me, sD)
+            probs = calculateProb(i, me, sD)
             probabilities0.append(probs)
         cNum =1
         probNum1 = testClassProb(self.test0, cNum)
         finalprob0 =  np.argmax(sum(probabilities0, probNum1))
         print("Final probability of class 0:", finalprob0)
-        # for m in self.test1:
-        #     me = mean(i)
-        #     sD = stdev(i)
-        #     probs = calculateProb(self, me, sD)
-        #     probabilities.append(probs)
+        for m in self.test1:
+            me = mean(i)
+            sD = stdev(i)
+            probs = calculateProb(i, me, sD)
+            probabiltiies1.append(probs)
+        cNum = 0
+        probNum1 = testClassProb(self.test1, cNum)
+        finalprob1 = np.argmax(sum(probabiltiies1, probNum1))
+        print("Final probabilitie of class1:", finalprob1)
 
-    def calculateProb(data, me, sD):
-       # pi = math.pi
-        ex = exp(-((data- me)**2/(2*sD**2)))
-        return (1/ (sqrt(2* pi)* sD))* ex
+def calculateProb(data, me, sD):
+    # pi = math.pi
+    ex = exp(-((data- me)**2/(2*sD**2)))
+    return (1/ (sqrt(2* pi)* sD))* ex
 
-    def testClassProb(self, data,cNum ):
-        countSpam = 0
-        countNot = 0
-        for i in data:
-            if i[57] == 1:
-                countSpam +=1
-            else:
-                countNot +=1
-        if cNum == 1:
-            return countSpam/self.test
+def testClassProb (data,cNum ):
+    countSpam = 0
+    countNot = 0
+    for i in data:
+        if i[57] == 1:
+            countSpam +=1
         else:
-            return countNot/self.test
+            countNot +=1
+    if cNum == 1:
+        return countSpam/len(data)
+    else:
+        return countNot/len(data)
 
 def mean(data):
     return sum(data)/float(len(data))
