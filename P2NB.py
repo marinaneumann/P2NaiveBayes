@@ -80,32 +80,43 @@ class spamClassifer():
         print("SUP?")
         means0 = []
         stDevs0 = []
+        means1 = []
+        stDevs1 = []
+
         probabilities = []
         probabilities0 = []
         probabiltiies1 = []
-        finalprob0 =0
-        finalprob1 = 0
+        finalprob0 = []
+        finalprob1 = []
         for column in zip(*self.test0):
             means0.append(mean(column))
             stDevs0.append(stdev(column))
-        del (means0[-1])
-        del (stDevs0[-1])
-        n = 0
+        #del (means0[-1])
+        #del (stDevs0[-1])
+        n =0
+        cNum = 1
         for i in self.test0:
             for z in i:
                 probs = calculateProb(z, means0[n], stDevs0[n])
                 n +=1
                 probabilities.append(probs)
             probabilities0.append(np.log(probabilities))
-        cNum =1
-        probNum1 = testClassProb(self.test0, cNum)
-        finalprob0 = np.argmax(sum(probabilities0, np.log(probNum1)))
-        print("Final probability of class 0:", finalprob0)
+            probNum1 = testClassProb(self.test0, cNum)
+            finalprob0.append(np.argmax(sum(probabilities0, np.log(probNum1))))
+
+        print("Final probabilities of class 0:", finalprob0)
+        probabilities.clear()
+        for column in zip(*self.test1):
+            means1.append(mean(column))
+            stDevs1.append(stdev(column))
+        del (means1[-1])
+        del (stDevs1[-1])
+        k=0
         for m in self.test1:
-            me = mean(m)
-            sD = stdev(m)
-            i#probs = calculateProb(m, me, sD)
-            #probabiltiies1.append(probs)
+            for z in m:
+                probs = calculateProb(z, means1[k], stDevs1[k])
+                probabilities.append(probs)
+            probabiltiies1.append(probs)
         cNum = 0
         probNum1 = testClassProb(self.test1, cNum)
         finalprob1 = np.argmax(sum(probabiltiies1, probNum1))
@@ -135,6 +146,10 @@ def mean(data):
 def stdev(data):
     avg = mean(data)
     variance = sum([(x-avg)**2 for x in data])/ float(len(data)-1)
-    return sqrt(variance)
+    num = sqrt(variance)
+    if num == 0:
+        return 0.0001
+    else:
+        return num
 
 main()
