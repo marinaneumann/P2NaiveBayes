@@ -75,20 +75,15 @@ class spamClassifer():
                 arrays0.append(i)
                 countNot +=1
 
-        probabilities = []
-        probabilities0 = []
-        probabilities1 = []
+        # probabilities = []
+        # probabilities0 = []
+        # probabilities1 = []
         finalprob0 = [] #Will hold all class 0(x) probabilities
         finalprob1 = [] #Will hold all class 1(x) probabilities
 
         means0, stDevs0, means1, stDevs1 = arrayStatistics(arrays0, arrays1)
-        cNum = 1 #cNums are used as indicators for testClassProb function, to specify what is to be returned later
-        #pdf = calculateProb(arrays0[0], means0,stDevs0)
-        #print("Pdf of arrays0:",pdf)
-
         probs = 1
         for i in arrays0:
-           # for z in range(0,57):
             probs *= calculateProb(i, means0, stDevs0)
             #probabilities.append(probs)
             #print("Conditional probability of",i, "is:", probs)
@@ -96,28 +91,20 @@ class spamClassifer():
         print("The probability of class 0 is:", probs)
         #print(probabilities0)
         #print(len(arrays0))
+
         # probNum0 = countNot / self.numTest
         # probNum0 = np.log(probNum0)
         # goMan = sum(probabilities0, probNum0)
         # finalprob0 = np.argmax(goMan)
         #finalprob0 = np.argmax(sum(probabilities0, np.log(probNum0)))
         #print("Final probabilities of class 0:", finalprob0)
-
-        # probabilities.clear()
-        # for column in zip(*arrays1):
-        #     means1.append(mean(column))
-        #     stDevs1.append(stdev(column))
-        # del (means1[-1])
-        # del (stDevs1[-1])
-        # cNum =0
-        # for m in arrays1:
-        #     for z in range(0,57):
-        #         probs = calculateProb(m[z], means1[z], stDevs1[z])
-        #         probabilities.append(probs)
-        #     probabilities1.append(np.log(probabilities))
-        # print(probabilities1)
-        # probNum1 = countSpam/self.numTest
-
+        probs = 1
+        for m in arrays1:
+                probs *= calculateProb(m, means1, stDevs1)
+                #probabilities.append(probs)
+            #probabilities1.append(np.log(probabilities))
+        #print(probs)
+       # probNum1 = countSpam/self.numTest
         #finalprob1.append(np.argmax(sum(probabiltiies1, probNum1)))
         #print("Final probabilities of class1:", finalprob1)
 
