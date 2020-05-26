@@ -49,6 +49,7 @@ class spamClassifer():
             else:
                 arrays0.append(i)
                 countNot +=1
+        global means0, stDevs0, means1, stDevs1
         means0, stDevs0, means1, stDevs1 = arrayStatistics(arrays0, arrays1)
 
         #Computes prior probability of spam vs not spam
@@ -74,17 +75,50 @@ class spamClassifer():
                 countNot +=1
         probNum0 = countNot / self.numTest
         probNum1 = countSpam / self.numTest
+        accuracy = 0
+        acc = 0
+        prediction = 99
+        #for i in self.test:
+        p0 = np.log(probNum0) + calculateProb(self.test[0],means0, stDevs0)
+        print("This is p0 before armgax?", p0)
+        p0 = np.argmax(p0)
+        p1 = np.log(probNum1)+ calculateProb(self.test[0], means1, stDevs1)
+        print("This is p1 before argmax?",p1)
+        p1 = np.argmax(p1)
+        print("Prob 0:", p0)
+        print("Prob 1:", p1)
+        if(p0 > p1):
+            prediction = 0
+        elif(p0 <p1):
+            prediction = 1
+        acc = accuracyTest(i, prediction)
+        print("Data:", i)
+        print("Accuracy is correct, then 1, incorrect is 0. Accuracy is........: ", acc)
 
+        accuracy += acc
+
+
+        print("Accuracy is:", accuracy/len(self.test))
+
+def accuracyTest(data,prediction):
+   if data[57] == prediction:
+       return 1
+   else:
+       return 0
 
 def calculateProb(data, me, sD):
     # pi = math.pi
-    product =1
+    product =0
     for j in range(0,57):
-        product = product * (1/sqrt(2*pi*sD[j]))* exp(-0.5*pow((data[j]-me[j]),2)/sD[j])
+        p = (1/sqrt(2*pi*sD[j]))* exp(-0.5*pow((data[j]-me[j]),2)/sD[j])
+        if p ==0:
+            p = 0.000000000001
+        product = product + np.log(p)
+        #print("The proudct of x at" , j, "is", product)
         #product = np.log(product)
         #ex = exp(-((data[j]- me[j])**2/(2*sD[j]**2)))
         #product = (1/ (sqrt(2* pi)* sD[j]))* ex
-    return np.log(product)
+    return product
     #return product
 
 def arrayStatistics(arrays0, arrays1):
