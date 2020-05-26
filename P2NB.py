@@ -1,9 +1,6 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
-import statistics
-#import math
 from math import sqrt, pi, exp
-import os
 
 
 def main():
@@ -14,7 +11,7 @@ def main():
     spamOrNot = spamClassifer(Xtrain,Xtest)  #establishment of spamClassifer object
 
     spamOrNot.model() #creates probabilistic model
-    spamOrNot.naiveBayesAlg()
+    spamOrNot.naiveBayesAlg() #applys naive Bayes algorithm to testing set
 
 #Loads function from data and splits into training and test data with a 50/50 split so roughly 2300 data instances per set
 def dataLoad():
@@ -55,20 +52,22 @@ class spamClassifer():
         #Computes prior probability of spam vs not spam
         probSpam = countSpam/ self.numTrain
         probNotSpam = countNot/self.numTrain
-        #Output of relevant training set information.
-        print("Training data information:")
-        print("\t")
-        print("Prior probability that it is spam:", probSpam)
-        print("Prior probability that it is NOT spam:", probNotSpam)
-        print("Standard deviation for class 0:", stDevs0)
-        print("Mean for class 0:", means0)
-        print("Mean for class 1:", means1)
-        print("Standard deviation for class 1:", stDevs1)
-        print("\t")
+        #Output of relevant training set information but as its not required for assignment, commented out.
+        # print("Training data information:")
+        # print("\t")
+        print("Prior probability of training data that it is spam:", probSpam)
+        print("Prior probability of training data that it is NOT spam:", probNotSpam)
+        # print("Standard deviation for class 0:", stDevs0)
+        # print("Mean for class 0:", means0)
+        # print("Mean for class 1:", means1)
+        # print("Standard deviation for class 1:", stDevs1)
+        # print("\t")
 
     #Function for Gaussian Naive bayes Algorithm
     def naiveBayesAlg(self):
-        print("Test Data")
+        print("\t")
+        print("Gaussian Naive Bayes Algorithm")
+        print("\t")
         countSpam = 0
         countNot = 0
         for i in self.test:
@@ -78,44 +77,63 @@ class spamClassifer():
                 countNot +=1
         probNum0 = countNot / self.numTest
         probNum1 = countSpam / self.numTest
-        accuracy = 0
-        acc = 0
-        prediction = 99
+        T0 = 0
+        T1 = 0
+        F0 = 0
+        F1 = 0
+        prediction = 99 #default value for prediction
+
+
         for i in self.test:
             p0 = np.log(probNum0) + calculateProb(i,means0, stDevs0)
-            #p0 = np.argmax(p0)
+            #p0 = np.argmax(p0)    #Wasn't able to use argmax as it zeroed out values...
             p1 = np.log(probNum1)+ calculateProb(i, means1, stDevs1)
-            #p1 = np.argmax(p1)
-            test = max(p0, p1)
+            #p1 = np.argmax(p1)    #Wasn't able to use argmax as it zeroed out values...
+            test = max(p0, p1)   #Used to find larger probability for predictions
             if(test == p0):
                 prediction = 0
             elif(test == p1):
                 prediction = 1
-            acc = accuracyTest(i, prediction)
-            print("Data SHOULD be", i[57])
-            if(res == True):
-                print("Correctly predicted")
-            else:
-                print("Incorrectly predicted")
-            print("\t")
-            accuracy +=acc
+            t0, t1, f0, f1 = accuracyTest(i, prediction)
+
+            T0 += t0
+            T1 += t1
+            F0 += f0
+            F1 += f1
+        print("T0: ", T0)
+        print("T1: ", T1)
+        print("F0: ", F0)
+        print("F1: ", F1)
 
         print("\t")
-        print("Accuracy is:", (accuracy/self.numTest)*100)  #True positive & true negative divided by all
-        print("Precision is:")
-        print("Total recall is:")
+        print("Accuracy is:", ((T0+T1)/self.numTest)*100)  #True positive & true negative divided by all
+        print("Precision is:", (T1/(T1+F1)) *100)
+        print("Total recall is:", (T1/(T1+F0))*100)
 
+#Function to check prediction vs actual for accuracy
 def accuracyTest(data,prediction):
-   global res
+    global res
+    t0 = 0
+    t1 = 0
+    f0 = 0
+    f1 = 0
+    if data[57] == prediction: #Checks to see if predictions and actual data labels are the same
+        res = True #Generally reports to user if correctly predicted or not
+        #Code below splits into TP, TN, FP, F0
+        if prediction == 0:
+            t0 = 1
+        else:
+            t1 = 1
+    else:
+        res = False
+        if prediction == 1:
+            f1 = 1
+        else:
+            f0 = 1
 
+    return t0, t1, f0, f1
 
-   if data[57] == prediction:
-       res = True #Generally reports to user if correctly predicted or not
-       return 1
-   else:
-       res = False
-       return 0
-
+#Calculates pdfs of all features for each data
 def calculateProb(data, me, sD):
     # pi = math.pi
     product =1
@@ -129,6 +147,7 @@ def calculateProb(data, me, sD):
         product = product + np.log(p)
     return product
 
+#Used to take means and standard deviations of features for both array of class 0  data and array of class 1 data
 def arrayStatistics(arrays0, arrays1):
     means0 = []
     means1 =[]
