@@ -79,9 +79,8 @@ class spamClassifer():
         probNum0 = countNot / self.numTest
         probNum1 = countSpam / self.numTest
         accuracy = 0
-        prediction = 0
-        res = False
-
+        acc = 0
+        prediction = 99
         for i in self.test:
             p0 = np.log(probNum0) + calculateProb(i,means0, stDevs0)
             #p0 = np.argmax(p0)
@@ -92,14 +91,14 @@ class spamClassifer():
                 prediction = 0
             elif(test == p1):
                 prediction = 1
-            accuracy = accuracyTest(i, prediction)
-            # print("Data SHOULD be", i[57])
-            # if(res == True):
-            #     print("Correctly predicted")
-            # else:
-            #     print("Incorrectly predicted")
-            # print("\t")
-            accuracy += accuracy
+            acc = accuracyTest(i, prediction)
+            print("Data SHOULD be", i[57])
+            if(res == True):
+                print("Correctly predicted")
+            else:
+                print("Incorrectly predicted")
+            print("\t")
+            accuracy +=acc
 
         print("\t")
         print("Accuracy is:", (accuracy/self.numTest)*100)  #True positive & true negative divided by all
@@ -107,21 +106,15 @@ class spamClassifer():
         print("Total recall is:")
 
 def accuracyTest(data,prediction):
-    global res
-    if data[57] == prediction:
-        res = True #Generally reports to user if correctly predicted or not
-        # if prediction == 0:  #T0
-        #    T0 += 1
-        # else:
-        #    T1 +=1   #T1
-        return 1
-    else:
-        res = False #General prediction
-        # if prediction == 0: #F1   A False Negative, observation was suppose to be 1
-        #    F1 +=1
-        # else:
-        #    F0 +=1   #F0   A False Positive, observation was suppose to be 0
-        return 0
+   global res
+
+
+   if data[57] == prediction:
+       res = True #Generally reports to user if correctly predicted or not
+       return 1
+   else:
+       res = False
+       return 0
 
 def calculateProb(data, me, sD):
     # pi = math.pi
