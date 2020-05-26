@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 import statistics
 #import math
 from math import sqrt, pi, exp
+import os
 
 
 def main():
@@ -18,7 +19,8 @@ def main():
 #Loads function from data and splits into training and test data with a 50/50 split so roughly 2300 data instances per set
 def dataLoad():
     global Xtrain, Xtest
-    data = np.genfromtxt('spambase/spambase.data', delimiter=',', dtype=float)
+    #print(os.getcwd())
+    data = np.genfromtxt('P2NaiveBayes/spambase/spambase.data', delimiter=',', dtype=float)
     Xtrain, Xtest =train_test_split(data, shuffle = True, test_size = 0.5)
 
 #SpamClassifer object established
@@ -53,64 +55,27 @@ class spamClassifer():
         probSpam = countSpam/ self.numTrain
         probNotSpam = countNot/self.numTrain
         #Output of relevant training set information.
-        print("Prior probability that it is spam:", probSpam)
-        print("Prior probability that it is NOT spam:", probNotSpam)
-        print("Standard deviation for class 0:", stDevs0)
-        print("Mean for class 0:", means0)
-        print("Mean for class 1:", means1)
-        print("Standard deviation for class 1:", stDevs1)
+        # print("Prior probability that it is spam:", probSpam)
+        # print("Prior probability that it is NOT spam:", probNotSpam)
+        # print("Standard deviation for class 0:", stDevs0)
+        # print("Mean for class 0:", means0)
+        # print("Mean for class 1:", means1)
+        # print("Standard deviation for class 1:", stDevs1)
 
     #Function for Gaussian Naive bayes Algorithm
     def naiveBayesAlg(self):
         print("SUP?")
         countSpam = 0
         countNot = 0
-        arrays0  =[]
-        arrays1 =[]
         for i in self.test:
             if i[57] == 1:
-                arrays1.append(i)
                 countSpam +=1
             else:
-                arrays0.append(i)
                 countNot +=1
-
-        probabilities0 = []
-        probabilities1 = []
-
-        means0, stDevs0, means1, stDevs1 = arrayStatistics(arrays0, arrays1)
         probNum0 = countNot / self.numTest
-        probs = 1
-        for i in arrays0:
-            probs = np.log(probNum0) + calculateProb(i, means0, stDevs0)
-            answer = np.argmax(probs)
-            print(answer)
-            # print("Final probabilities of class1:", finalprob1)
-            #probabilities0.append(probs)
-            #print("Conditional probability of",i, "is:", probs)
-            #probabilities0.append(np.log(probs))
-        #print("The probability of class 0 is:", probabilities0)
-
-        #nums =  np.log(probNum0) + probs
-        #answer = np.argmax(nums)
-        #answer = np.argmax(probabilities0)
-        #print(answer)
-        probs = 1
         probNum1 = countSpam / self.numTest
-        for m in arrays1:
-            probs = np.log(probNum1) + calculateProb(m, means1, stDevs1)
-            answer1 = np.argmax(probs)
-            print(answer1)
-                #probabilities.append(probs)
-            #probabilities1.append(probs)
-        #print("The probability of class 1 is:", probabilities1)
-        #nums1 = np.log(probNum1) + probs
-        #answer1 = np.argmax(nums1)
-        # answer1 = np.argmax(probabilities1)
-        # print(answer1)
 
-#Function used to calculate probability of X given class (0 or 1).
-#Used Xi, then mean and st. deviation of all x's with that classification
+
 def calculateProb(data, me, sD):
     # pi = math.pi
     product =1
