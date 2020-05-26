@@ -56,16 +56,19 @@ class spamClassifer():
         probSpam = countSpam/ self.numTrain
         probNotSpam = countNot/self.numTrain
         #Output of relevant training set information.
-        # print("Prior probability that it is spam:", probSpam)
-        # print("Prior probability that it is NOT spam:", probNotSpam)
-        # print("Standard deviation for class 0:", stDevs0)
-        # print("Mean for class 0:", means0)
-        # print("Mean for class 1:", means1)
-        # print("Standard deviation for class 1:", stDevs1)
+        print("Training data information:")
+        print("\t")
+        print("Prior probability that it is spam:", probSpam)
+        print("Prior probability that it is NOT spam:", probNotSpam)
+        print("Standard deviation for class 0:", stDevs0)
+        print("Mean for class 0:", means0)
+        print("Mean for class 1:", means1)
+        print("Standard deviation for class 1:", stDevs1)
+        print("\t")
 
     #Function for Gaussian Naive bayes Algorithm
     def naiveBayesAlg(self):
-        print("SUP?")
+        print("Test Data")
         countSpam = 0
         countNot = 0
         for i in self.test:
@@ -76,50 +79,62 @@ class spamClassifer():
         probNum0 = countNot / self.numTest
         probNum1 = countSpam / self.numTest
         accuracy = 0
-        acc = 0
-        prediction = 99
-        #for i in self.test:
-        p0 = np.log(probNum0) + calculateProb(self.test[0],means0, stDevs0)
-        print("This is p0 before armgax?", p0)
-        p0 = np.argmax(p0)
-        p1 = np.log(probNum1)+ calculateProb(self.test[0], means1, stDevs1)
-        print("This is p1 before argmax?",p1)
-        p1 = np.argmax(p1)
-        print("Prob 0:", p0)
-        print("Prob 1:", p1)
-        if(p0 > p1):
-            prediction = 0
-        elif(p0 <p1):
-            prediction = 1
-        acc = accuracyTest(i, prediction)
-        print("Data:", i)
-        print("Accuracy is correct, then 1, incorrect is 0. Accuracy is........: ", acc)
+        prediction = 0
+        res = False
 
-        accuracy += acc
+        for i in self.test:
+            p0 = np.log(probNum0) + calculateProb(i,means0, stDevs0)
+            #p0 = np.argmax(p0)
+            p1 = np.log(probNum1)+ calculateProb(i, means1, stDevs1)
+            #p1 = np.argmax(p1)
+            test = max(p0, p1)
+            if(test == p0):
+                prediction = 0
+            elif(test == p1):
+                prediction = 1
+            accuracy = accuracyTest(i, prediction)
+            # print("Data SHOULD be", i[57])
+            # if(res == True):
+            #     print("Correctly predicted")
+            # else:
+            #     print("Incorrectly predicted")
+            # print("\t")
+            accuracy += accuracy
 
-
-        print("Accuracy is:", accuracy/len(self.test))
+        print("\t")
+        print("Accuracy is:", (accuracy/self.numTest)*100)  #True positive & true negative divided by all
+        print("Precision is:")
+        print("Total recall is:")
 
 def accuracyTest(data,prediction):
-   if data[57] == prediction:
-       return 1
-   else:
-       return 0
+    global res
+    if data[57] == prediction:
+        res = True #Generally reports to user if correctly predicted or not
+        # if prediction == 0:  #T0
+        #    T0 += 1
+        # else:
+        #    T1 +=1   #T1
+        return 1
+    else:
+        res = False #General prediction
+        # if prediction == 0: #F1   A False Negative, observation was suppose to be 1
+        #    F1 +=1
+        # else:
+        #    F0 +=1   #F0   A False Positive, observation was suppose to be 0
+        return 0
 
 def calculateProb(data, me, sD):
     # pi = math.pi
-    product =0
+    product =1
     for j in range(0,57):
-        p = (1/sqrt(2*pi*sD[j]))* exp(-0.5*pow((data[j]-me[j]),2)/sD[j])
-        if p ==0:
+        ex = exp(-((data[j]- me[j])**2/(2*sD[j]**2)))
+        p =(1/ (sqrt(2* pi)* sD[j]))* ex
+        #p = (1/sqrt(2*pi*sD[j]))* exp(-0.5*pow((data[j]-me[j]),2)/sD[j])
+        if p == 0:
             p = 0.000000000001
+        #product = product + np.log(p)
         product = product + np.log(p)
-        #print("The proudct of x at" , j, "is", product)
-        #product = np.log(product)
-        #ex = exp(-((data[j]- me[j])**2/(2*sD[j]**2)))
-        #product = (1/ (sqrt(2* pi)* sD[j]))* ex
     return product
-    #return product
 
 def arrayStatistics(arrays0, arrays1):
     means0 = []
